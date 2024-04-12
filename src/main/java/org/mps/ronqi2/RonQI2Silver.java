@@ -1,10 +1,14 @@
 package org.mps.ronqi2;
 
+import org.mps.dispositivo.DispositivoSilver;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class RonQI2Silver extends RonQI2{
-    
+
+
+    private DispositivoSilver disp;
     private int numLecturas;
     private List<Float> lecturasP;
     private List<Float> lecturasS;
@@ -16,29 +20,30 @@ public class RonQI2Silver extends RonQI2{
         thresholdP = 20.0f;
         thresholdS = 30.0f;
         numLecturas=5;
+        disp = new DispositivoSilver();
     }
 
-    /* 
+    /*
      * Obtiene las lecturas de presion y sonido del dispositivo y las almacena en sus respectivos
      * contenedores.
-    */
+     */
     public void obtenerNuevaLectura(){
         lecturasP.add(disp.leerSensorPresion());
         if(lecturasP.size()>numLecturas){
-            lecturasP.remove(0); 
+            lecturasP.remove(0);
         }
-        lecturasS.add(disp.leerSensorPresion());
+        lecturasS.add(disp.leerSensorSonido());
         if(lecturasS.size()>numLecturas){
-            lecturasS.remove(0); 
+            lecturasS.remove(0);
         }
     }
 
-    /* 
-     * Evalua la apnea del sueno. 
-     * - Devuelve true si el promedio de las lecturas de presion y sonido es mayor a los limites 
+    /*
+     * Evalua la apnea del sueno.
+     * - Devuelve true si el promedio de las lecturas de presion y sonido es mayor a los limites
      *      establecidos
      * - False en otro caso
-    */
+     */
     @Override
     public boolean evaluarApneaSuenyo() {
         boolean resultado;
@@ -50,16 +55,16 @@ public class RonQI2Silver extends RonQI2{
                 .mapToDouble(d -> d)
                 .average()
                 .orElse(0.0);
-        
+
         if (avgP>=thresholdP && avgS > thresholdS){
             resultado = false;
-        }   
+        }
         else{
             resultado = true;
         }
         return resultado;
     }
 
-   
-    
+
+
 }
